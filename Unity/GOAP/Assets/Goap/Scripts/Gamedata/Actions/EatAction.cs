@@ -27,6 +27,7 @@ public class EatAction : GoapAction
     public override bool Preform(GameObject _agent)
     {
         GetComponent<BackpackComponent>().food -= 1;
+        print("EatFood");
         hasEaten = true;
         return true;
     }
@@ -38,6 +39,6 @@ public class EatAction : GoapAction
 
     public override void Reset()
     {
-        hasEaten = true;
+        hasEaten = false;
     }
 }

@@ -2,38 +2,38 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PickupWeaponAction : GoapAction {
+public class SeekShelterAction : GoapAction
+{
 
-    bool pickedUp = false;
-    Weapon targetWeapon = null;
+    bool shelter = false;
+    Cave targetCave = null;
 
-    public PickupWeaponAction()
+    public SeekShelterAction()
     {
-        AddPrecondition("HasWeapon", false);
-        AddEffect("HasWeapon", true);
+        AddEffect("HasShelter", true);
     }
 
     public override bool CheckProceduralPrecondition(GameObject _agent)
     {
-        Weapon[] weapons = FindObjectsOfType<Weapon>();
-        Weapon closest = null;
+        Cave[] caves = FindObjectsOfType<Cave>();
+        Cave closest = null;
         float dist = 0;
 
-        foreach (Weapon w in weapons)
+        foreach (Cave c in caves)
         {
-            if (w.isFound)
+            if (c.isFound)
             {
                 if (closest == null)
                 {
-                    closest = w;
-                    dist = Vector3.Distance(transform.position, w.transform.position);
+                    closest = c;
+                    dist = Vector3.Distance(transform.position, c.transform.position);
                 }
                 else
                 {
-                    float dist2 = Vector3.Distance(transform.position, w.transform.position);
+                    float dist2 = Vector3.Distance(transform.position, c.transform.position);
                     if (dist > dist2)
                     {
-                        closest = w;
+                        closest = c;
                         dist = dist2;
                     }
                 }
@@ -41,8 +41,8 @@ public class PickupWeaponAction : GoapAction {
         }
         if (closest != null)
         {
-            targetWeapon = closest;
-            target = targetWeapon.gameObject;
+            targetCave = closest;
+            target = targetCave.gameObject;
         }
 
         return closest != null;
@@ -50,16 +50,14 @@ public class PickupWeaponAction : GoapAction {
 
     public override bool IsDone()
     {
-        return pickedUp;
+        return shelter;
     }
 
     public override bool Preform(GameObject _agent)
     {
         Caveman cm = _agent.GetComponent<Caveman>();
         cm.energy -= cost;
-        BackpackComponent bp = _agent.GetComponent<BackpackComponent>();
-        bp.spears++;
-        pickedUp = true;
+        shelter = true;
         return true;
     }
 
@@ -70,7 +68,7 @@ public class PickupWeaponAction : GoapAction {
 
     public override void Reset()
     {
-        pickedUp = false;
-        targetWeapon = null;
+        shelter = false;
+        targetCave = null;
     }
 }

@@ -2,28 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KillAnimalAction : GoapAction {
+public class LootCarcassAction : GoapAction {
 
-    bool killed = false;
-    Animal targetAnimal = null;
+    bool harvested = false;
+    Carcass targetCarcass = null;
 
     float startTime = 0;
-    public float killDuration = 2;
+    public float harvestDuration = 2;
 
-    public KillAnimalAction()
+    public LootCarcassAction()
     {
-        AddPrecondition("HasWeapon", true);
-        AddEffect("KillAnimal", true);
-        AddEffect("CarcassExists", true);
+        AddPrecondition("CarcassExists", true);
+        AddEffect("HasRawFood", true);
     }
 
     public override bool CheckProceduralPrecondition(GameObject _agent)
     {
-        Animal[] animals = FindObjectsOfType<Animal>();
-        Animal closest = null;
+        Carcass[] carcasses = FindObjectsOfType<Carcass>();
+        Carcass closest = null;
         float dist = 0;
 
-        foreach (Animal a in animals)
+        foreach (Carcass a in carcasses)
         {
             if (a.isFound)
             {
@@ -45,16 +44,17 @@ public class KillAnimalAction : GoapAction {
         }
         if (closest != null)
         {
-            targetAnimal = closest;
-            target = targetAnimal.gameObject;
+            targetCarcass = closest;
+            target = targetCarcass.gameObject;
         }
 
-        return closest != null;
+        //return closest != null;
+        return true;
     }
 
     public override bool IsDone()
     {
-        return killed;
+        return harvested;
     }
 
     public override bool Preform(GameObject _agent)
@@ -62,12 +62,14 @@ public class KillAnimalAction : GoapAction {
         if (startTime == 0)
             startTime = Time.time;
 
-        if (Time.time - startTime > killDuration)
+        if (Time.time - startTime > harvestDuration)
         {
             Caveman cm = _agent.GetComponent<Caveman>();
             cm.energy -= cost;
-            killed = true;
-            targetAnimal.Die();
+            targetCarcass.Loot();
+            BackpackComponent bp = _agent.GetComponent<BackpackComponent>();
+            bp.rawFood++;
+            harvested = true;
         }
         return true;
     }
@@ -79,8 +81,8 @@ public class KillAnimalAction : GoapAction {
 
     public override void Reset()
     {
-        killed = false;
-        targetAnimal = null;
+        harvested = false;
+        targetCarcass = null;
         startTime = 0;
     }
 }

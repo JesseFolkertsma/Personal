@@ -9,6 +9,7 @@ public abstract class GoapAction : MonoBehaviour {
 
     bool inRange = false;
     public float cost = 1f;
+    public float reachDistance = 2.5f;
     public GameObject target;
 
     public GoapAction()
@@ -22,6 +23,11 @@ public abstract class GoapAction : MonoBehaviour {
         inRange = false;
         target = null;
         Reset();
+    }
+
+    public float ReachDistance()
+    {
+        return reachDistance;
     }
 
     public abstract void Reset();
